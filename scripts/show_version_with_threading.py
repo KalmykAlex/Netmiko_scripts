@@ -1,3 +1,4 @@
+import sys
 import threading
 from netmiko import ConnectHandler
 from easygui.easygui import multpasswordbox, passwordbox
@@ -5,15 +6,19 @@ from datetime import datetime
 from my_devices import device_list as devices
 
 def get_credentials():
-    username, password = multpasswordbox(
-        'Enter login credentials',
-        'Cisco - Netmiko',
-        ['Username', 'Password']
-    )
-    secret = passwordbox(
-        'Enter the enable secret',
-        'Cisco - Netmiko',
-    )
+
+    try:
+        username, password = multpasswordbox(
+            'Enter login credentials',
+            'Cisco - Netmiko',
+            ['Username', 'Password']
+        )
+        secret = passwordbox(
+            'Enter the enable secret',
+            'Cisco - Netmiko',
+        )
+    except TypeError:
+        sys.exit()
     return username, password, secret
 
 def show_version(device):
