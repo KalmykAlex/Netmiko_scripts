@@ -21,9 +21,8 @@ def main():
     """
     start_time = datetime.now()
 
-    username, password, secret = get_credentials()
-
     for device in devices:
+        username, password, secret = get_credentials(device.pop('device_name'))
         device['username'] = username
         device['password'] = password
         device['secret'] = secret
@@ -38,6 +37,4 @@ def main():
 
     print('\nElapsed time:' + str(datetime.now() - start_time))
 
-#main()
-print(get_credentials('Cisco C2660'))
-
+main()
