@@ -7,14 +7,14 @@ help me automate network switches, routers and firewalls configuration, back-ups
 
 I primarily focus on Cisco equipment but I am experimenting with other brands also.
 
-Devices configured: 
- - Cisco C2960-24TC-S Switch
- - Cisco C2950T-48-SI Switch
- - Cisco SF300-24 Switch
- - Allied Telesis AT-9000/24 Switch (experimental)
- - Cisco ASA 5506
- - Cisco ASA 5508
- - Cisco ASA 5545
+Devices tested | results: 
+ - [X] Cisco C2960-24TC-S Switch | works fine
+ - [ ] Cisco C2950T-48-SI Switch | could work but my IOS version doesn't support SSH
+ - [ ] Cisco SF300-24 Switch | doesn't work, unsupported netmiko firmware
+ - [ ] Allied Telesis AT-9000/24 Switch (experimental) | doesn't work, unsupported netmiko firmware
+ - [X] Cisco ASA 5506 | works fine
+ - [ ] Cisco ASA 5508 | not yet tested
+ - [ ] Cisco ASA 5545 | not yet tested
  
  For this to work, you must first make some basic configuration on the device in order for Netmiko to be able to connect to the
  device via SSH.
@@ -24,7 +24,9 @@ Devices configured:
   ip default-gateway <gateway IP address>
 
   interface vlan <vlan number>
-  ip address <IP address> <netmask>
+    ip address <IP address> <netmask>
+    no shutdown
+    exit
 
   hostname <name>
   ip domain-name <domain name>
@@ -35,11 +37,11 @@ Devices configured:
   line vty 0 4
     transport input ssh
     login local
-    password <password>
     exit
   line console 0
     logging synchronous
     login local
+    exit
 
   username <name> password <password>
   enable secret <enable password>
