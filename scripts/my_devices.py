@@ -1,14 +1,14 @@
 sw01 = {
     'device_type': 'cisco_ios',
-    'host': '172.16.4.201',
+    'host': '192.168.0.254',
     'device_name': 'Cisco C2960-24TC-S'
 }
 
-sw02 = {
-    'device_type': 'cisco_ios',
-    'host': '172.16.4.202',
-    'device_name': 'Cisco SF300-24'
+asa01 = {
+    'device_type': 'cisco_asa',
+    'host': '192.168.0.1',
+    'device_name': 'Cisco ASA 5506-X'
 }
 
 
-device_list = [sw02, sw01, ]
+device_list = [asa01, sw01, ]
