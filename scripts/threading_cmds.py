@@ -1,21 +1,11 @@
 import threading
-from netmiko import ConnectHandler
 from datetime import datetime
 from my_devices import device_list as devices
-from pysimplegui_credentials import get_credentials
+from gui import get_credentials
+from show_cmds import show_version, show_clock
 
 
-def show_version(device):
-    """Execute show version command using Netmiko."""
-    remote_conn = ConnectHandler(**device)
-    print()
-    print('#' * 80)
-    print(remote_conn.send_command_expect('show version'))
-    print('#' * 80)
-    print()
-    remote_conn.disconnect()
-
-def main():
+def main(func):
     """
     Use threads and Netmiko to connect to each of the devices. Execute
     'show version' on each device. Record the ammount of time required to do this.
@@ -27,7 +17,7 @@ def main():
         device['username'] = username
         device['password'] = password
         device['secret'] = secret
-        my_thread = threading.Thread(target=show_version, args=(device,))
+        my_thread = threading.Thread(target=func, args=(device,))
         my_thread.start()
 
     main_thread = threading.currentThread()
@@ -38,4 +28,4 @@ def main():
 
     print('\nElapsed time:' + str(datetime.now() - start_time))
 
-main()
+main(show_clock)
