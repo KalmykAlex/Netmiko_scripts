@@ -1,8 +1,8 @@
 import threading
 from datetime import datetime
 from my_devices import device_list as devices
-from gui import get_credentials, select_device
-from show_cmds import show_version, show_clock
+from gui import *
+from show_cmds import *
 from set_cmds import set_clock
 
 
@@ -32,4 +32,15 @@ def main(func):
 
 if __name__ == '__main__':
     # main(set_clock)
-    print(get_device())
+    host = '192.168.0.1'
+    username, password, secret = ('admin', 'fuckasspunk', 'fuckasspunk')
+    device = {
+        'device_type': 'cisco_asa',
+        'host': host,
+        'username': username,
+        'password': password,
+        'secret': secret
+    }
+    current_clock = 'clock'
+    hostname = 'hostname'
+    print(form_secure_login(host, current_clock, hostname))
