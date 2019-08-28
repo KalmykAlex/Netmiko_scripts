@@ -1,7 +1,7 @@
 import threading
 from datetime import datetime
 from my_devices import device_list as devices
-from gui import get_credentials
+from gui import get_credentials, select_device
 from show_cmds import show_version, show_clock
 from set_cmds import set_clock
 
@@ -15,7 +15,7 @@ def main(func):
     start_time = datetime.now()
 
     for device in devices:
-        username, password, secret = get_credentials(device.pop('device_name'))
+        username, password, secret = get_credentials(device['host'])
         device['username'] = username
         device['password'] = password
         device['secret'] = secret
@@ -31,4 +31,5 @@ def main(func):
 
 
 if __name__ == '__main__':
-    main(set_clock)
+    # main(set_clock)
+    print(select_device())
