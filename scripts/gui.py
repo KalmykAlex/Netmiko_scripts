@@ -3,7 +3,7 @@ import re
 import PySimpleGUI as sg
 
 
-def select_device():
+def get_device():
     """
     Prompts the user with a form in which he must
     specify the IP address of the device he wants to configure

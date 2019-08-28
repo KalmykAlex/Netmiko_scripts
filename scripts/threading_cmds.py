@@ -32,4 +32,4 @@ def main(func):
 
 if __name__ == '__main__':
     # main(set_clock)
-    print(select_device())
+    print(get_device())
