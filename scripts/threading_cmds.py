@@ -33,7 +33,7 @@ def main(func):
 if __name__ == '__main__':
     # main(set_clock)
     host = '192.168.0.1'
-    username, password, secret = ('admin', 'fuckasspunk', 'fuckasspunk')
+    username, password, secret = ('admin', 'password', 'secret')
     device = {
         'device_type': 'cisco_asa',
         'host': host,
