@@ -61,7 +61,7 @@ def get_credentials(host):
     return values['username'], values['password'], values['secret']
 
 
-def form_secure_login(host, current_clock, hostname):
+def form_secure_login(host, current_clock, hostname, domain, users):
     """
     Prompts the user with a form for configuring
     a Cisco device for secure login.
@@ -71,6 +71,15 @@ def form_secure_login(host, current_clock, hostname):
                  'UTC-5', 'UTC-4', 'UTC-3', 'UTC-2', 'UTC-1', 'UTC+0', 'UTC+1',
                  'UTC+2', 'UTC+3', 'UTC+4', 'UTC+5', 'UTC+6', 'UTC+7', 'UTC+8',
                  'UTC+9', 'UTC+10', 'UTC+11', 'UTC+12', 'UTC+13', 'UTC+14')
+    spinbox_minutes = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+                       '11', '12', '13', '14', '15', '16', '17', '18', '19', '20')
+    spinbox_seconds = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+                       '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+                       '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
+                       '31', '32', '33', '34', '35', '36', '37', '38', '39', '40',
+                       '41', '42', '43', '44', '45', '46', '47', '48', '49', '50',
+                       '51', '52', '53', '54', '55', '56', '57', '58', '59')
+    spinbox_delay = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
 
     layout = [
         [sg.Frame(layout=[
@@ -85,44 +94,60 @@ def form_secure_login(host, current_clock, hostname):
             ], title='Time settings')],
         [sg.T('Device hostname', size=(12, 1)),
          sg.In(size=(15, 1), default_text=f'{hostname}', key='hostname')],
+        [sg.T('Domain', size=(12, 1)),
+         sg.In(size=(15, 1), default_text=f'{domain}', key='domain')],
+        [sg.T(f'Configured users: {str(users).replace("[","").replace("]","")}',)],
         [sg.Frame(layout=[
-            [sg.T('Username', size=(15, 1)), sg.In(size=(15, 1), default_text='admin', key='username')],
-            [sg.T('Password', size=(15, 1)), sg.In(size=(15, 1), password_char='*', key='password')],
-            [sg.T('Confirm Password', size=(15, 1)), sg.In(size=(15, 1), password_char='*', key='password_confirm')],
+            [sg.T('Username', size=(15, 1)),
+             sg.In(size=(15, 1), default_text='admin', key='username')],
+            [sg.T('Password', size=(15, 1)),
+             sg.In(size=(15, 1), password_char='*', key='password')],
+            [sg.T('Confirm Password', size=(15, 1)),
+             sg.In(size=(15, 1), password_char='*', key='password_confirm')],
         ], title='Create new username')],
-        # TODO:
-        #  Line vty 0 4
-        # 	Exec-timeout <minutes> <secs>
-        # 	Login local
-        # 	Transport input ssh
-        # 	Exit
-        #  Line console 0
-        # 	Exec-timeout <minutes> <secs>
-        # 	Login local
-        # 	Exit
-        #  Banner login /Insert text here./
-        #  Login block-for <secs> attempts <tries> within <secs>
-        #  Ip access-list standard <nume acl>
-        # 	Remark Permite accesul doar hosturilor de administrare
-        # 	Permit <IP> <wildcard>
-        # 	Permit <IP> <wildcard>
-        # 	exit
-        #  Login quiet-mode access-class <acl-name/acl-number>
-        #  Login delay <secs>
-        #  Login on-success log
-        #  Login on-failure log
-        #  !ENABLE SSH
-        #  Ip domain-name <domain>
-        #  Crypto key generate rsa general-keys modulus 2048
-        #  Ip ssh version 2
-        #  Ip ssh time-out <secs>
-        #  Ip ssh authentication-retries <number of retries>
-
+        [sg.T('SSH exec timeout', size=(17, 1)),
+         sg.T('minutes'),
+         sg.Spin(values=spinbox_minutes, initial_value='3', size=(2, 1), key='ssh_timeout_min'),
+         sg.T('seconds'),
+         sg.Spin(values=spinbox_seconds, initial_value='0', size=(2, 1), key='ssh_timeout_sec')],
+        [sg.T('Console exec timeout', size=(17, 1)),
+         sg.T('minutes'),
+         sg.Spin(values=spinbox_minutes, initial_value='3', size=(2, 1), key='con_timeout_min'),
+         sg.T('seconds'),
+         sg.Spin(values=spinbox_seconds, initial_value='0', size=(2, 1), key='con_timeout_sec')],
+        [sg.T('Banner')],
+        [sg.Multiline(size=(35, 3), key='banner', default_text='/Default Banner/')],
+        [sg.Frame(layout=[
+            [sg.T('ACL Name', size=(8, 1)), sg.In(size=(20, 1), key='acl_name')],
+            [sg.T('Remark', size=(8, 1)), sg.In(size=(20, 2), key='acl_remark')],
+            [sg.T('Permit', size=(8, 1)),
+             sg.T('IP'), sg.In(size=(15, 1), key='ip'),
+             sg.T('Wildcard'), sg.In(size=(15, 1), key='wildcard')],
+        ], title='Access Control')],
+        [sg.T('Delay between successive fail login'),
+         sg.Spin(values=spinbox_delay, initial_value='3', size=(2, 1), key='login_delay')],
+        [sg.Checkbox('Log successful logins', key='log_success_login')],
+        [sg.Checkbox('Log failed logins', key='log_failure_login')],
         [sg.OK()]
     ]
+
+    #TODO: user input validation
 
     window = sg.Window(title, layout)
 
     event, values = window.Read()
 
     return event, values
+
+
+def progress_bar(host):
+    """Displays a progress bar that informs the user on the currently running processes."""
+
+    title = f'Fetching device information from {host}'
+    layout = [
+        [sg.ProgressBar(1, orientation='h', size=(40, 10), key='progress')]
+    ]
+    window = sg.Window(title, layout, auto_size_text=False, default_element_size=(10,1)).Finalize()
+    progress = window.FindElement('progress')
+
+    return progress
