@@ -13,12 +13,12 @@ def get_device():
     title = 'Enter the IP address of the device'
 
     layout = [
-        [sg.T('IP address')],
-        [sg.In(size=(30, 1), key='host')],
-        [sg.OK(size=(15, 1)), sg.Cancel(size=(15, 1))]
+        [sg.T('IP address', size=(20, 1))],
+        [sg.In(size=(25, 1), key='host')],
+        [sg.OK(size=(10, 1)), sg.Cancel(size=(10, 1))]
     ]
 
-    window = sg.Window(title, layout)
+    window = sg.Window(title, layout, element_justification='center')
 
     while True:
         event, values = window.Read()
@@ -28,6 +28,7 @@ def get_device():
             if re.match(r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9]'
                         r'[0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]'
                         r'|[01]?[0-9][0-9]?)$', values['host']):
+                window.Close()
                 break
             else:
                 sg.Popup('Invalid IP')
@@ -45,12 +46,12 @@ def get_device_type():
     title = 'Select device type'
 
     layout = [
-        [sg.Radio('Cisco IOS', 'RADIO2', default=True, size=(15, 1), key='ios')],
-        [sg.Radio('Cisco ASA', 'RADIO2', size=(15, 1), key='asa')],
+        [sg.Radio('Cisco IOS', 'RADIO2', default=True, key='ios')],
+        [sg.Radio('Cisco ASA', 'RADIO2', key='asa')],
         [sg.OK(size=(10, 1)), sg.Cancel(size=(10, 1))]
     ]
 
-    window = sg.Window(title, layout)
+    window = sg.Window(title, layout, element_justification='left')
 
     while True:
         event, values = window.Read()
@@ -58,8 +59,10 @@ def get_device_type():
             sys.exit()
         else:
             if values['ios'] == True:
+                window.Close()
                 return DEVICE_TYPES[0]
             elif values['asa'] == True:
+                window.Close()
                 return DEVICE_TYPES[1]
 
 
@@ -80,16 +83,17 @@ def get_credentials(host):
     ]
 
     window = sg.Window(title, auto_size_text=False, default_element_size=(10,1),
-                       text_justification='r',
+                       text_justification='right',
                        grab_anywhere=False).Layout(layout)
 
     while True:
-        event, values = window.read()
+        event, values = window.Read()
         if event in [None, 'Cancel']:
             sys.exit()
         elif '' in values.values():
             sg.Popup('Empty field')
         else:
+            window.Close()
             break
 
     return values['username'], values['password'], values['secret']
@@ -170,6 +174,7 @@ def form_secure_login(host, current_clock, hostname, domain, users):
     window = sg.Window(title, layout)
 
     event, values = window.Read()
+    window.Close()
 
     return event, values
 
@@ -181,7 +186,45 @@ def progress_bar(host):
     layout = [
         [sg.ProgressBar(1, orientation='h', size=(40, 10), key='progress')]
     ]
-    window = sg.Window(title, layout, auto_size_text=False, default_element_size=(10,1)).Finalize()
+    window = sg.Window(title, layout,
+                       auto_size_text=False,
+                       default_element_size=(10,1)).Finalize()
     progress = window.FindElement('progress')
 
     return progress
+
+
+def save_configuration():
+    """Propmts the user with the choice to save the configuration to flash."""
+
+    title = 'Save Configuration'
+
+    layout = [
+        [sg.T('Save Configuration to flash?', size=(20, 1))],
+        [sg.Radio('Yes', 'RADIO3', size=(5, 1), key='yes'),
+         sg.Radio('No', 'RADIO3', size=(5, 1), key='no')],
+        [sg.OK('Confirm', size=(10, 1)), sg.Cancel(size=(10, 1))]
+    ]
+
+    window = sg.Window(title, layout,
+                       auto_size_text=False,
+                       default_element_size=(10, 1),
+                       element_justification='center')
+
+    while True:
+        event, values = window.Read()
+        if event is None:
+            sys.exit()
+        else:
+            if values['yes']:
+                window.Close()
+                sg.Popup('Configuration saved to flash')
+                return True
+            elif values['no'] or event == 'Cancel':
+                choice = sg.PopupOKCancel('All changes will be lost at reboot.\nAre you sure?')
+                if choice in ['Cancel', None]:
+                    continue
+                elif choice == 'OK':
+                    window.Close()
+                    sg.Popup('Configuration not saved to flash')
+                    return False

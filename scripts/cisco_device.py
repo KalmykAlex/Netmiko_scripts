@@ -1,6 +1,6 @@
 from netmiko import ConnectHandler
 from datetime import datetime
-from gui import get_device, get_credentials, get_device_type
+from gui import get_device, get_credentials, get_device_type, save_configuration
 from re import search
 import pytz
 
@@ -42,7 +42,7 @@ class Device:
     def clock(self, datetime_obj):
         """
         Sets the clock of the device using Netmiko.
-        :param datetime_obj: an instance of the datetime.datetime class
+        :param (datetime_obj): an instance of the datetime.datetime class
         """
         if isinstance(datetime_obj, datetime):
             equipment_date_raw = self.remote_conn.send_command('show clock') \
@@ -105,15 +105,12 @@ class Device:
 
     def __exit__(self, *args):
         while True:
-            choice = input('Save changes to flash? (Y/N): ')
-            if choice in ['Y', 'y', 'yes']:
+            choice = save_configuration()
+            if choice == True:
                 self.remote_conn.enable()
                 self.remote_conn.send_command('write memory')
                 print('Configuration saved to flash.')
                 break
-            elif choice in ['N', 'n', 'no']:
-                print('Configuration not saved to flash. All changes will be lost at reboot.')
-                break
             else:
-                print('Invalid option selected.\nPlease try again.')
+                break
         self.remote_conn.disconnect()
