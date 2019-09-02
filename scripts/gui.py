@@ -35,6 +35,35 @@ def get_device():
     return values['host']
 
 
+def get_device_type():
+    """
+    Prompts the user with a form in which to chose
+    the device type from a predefined list
+    """
+    DEVICE_TYPES = ['cisco_ios', 'cisco_asa']
+
+    title = 'Select device type'
+
+    layout = [
+        [sg.Radio('Cisco IOS', 'RADIO2', default=True, size=(15, 1), key='ios')],
+        [sg.Radio('Cisco ASA', 'RADIO2', size=(15, 1), key='asa')],
+        [sg.OK(size=(10, 1)), sg.Cancel(size=(10, 1))]
+    ]
+
+    window = sg.Window(title, layout)
+
+    while True:
+        event, values = window.Read()
+        if event in [None, 'Cancel']:
+            sys.exit()
+        else:
+            if values['ios'] == True:
+                return DEVICE_TYPES[0]
+            elif values['asa'] == True:
+                return DEVICE_TYPES[1]
+
+
+
 def get_credentials(host):
     """
     Prompts the user with a login form and returns a tuple
@@ -54,9 +83,14 @@ def get_credentials(host):
                        text_justification='r',
                        grab_anywhere=False).Layout(layout)
 
-    event, values = window.read()
-    if event in [None, 'Cancel']:
-        sys.exit()
+    while True:
+        event, values = window.read()
+        if event in [None, 'Cancel']:
+            sys.exit()
+        elif '' in values.values():
+            sg.Popup('Empty field')
+        else:
+            break
 
     return values['username'], values['password'], values['secret']
 
