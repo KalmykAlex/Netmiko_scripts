@@ -1,5 +1,7 @@
 # Netmiko_scripts
 
+[![Generic badge](https://img.shields.io/badge/python_version-3.7-blue.svg)](https://shields.io/)
+
 Python Scripts for network automation powered by Netmiko!
 
 In the **_scripts_** folder you will find a wide variety of useful network automation scripts that I have developed to
