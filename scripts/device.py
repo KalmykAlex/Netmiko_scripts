@@ -5,7 +5,7 @@ from re import search
 import pytz
 
 
-class Device:
+class CiscoDevice:
 
     def __init__(self):
         device_type = ui.get_device_type_window()

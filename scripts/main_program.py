@@ -1,9 +1,9 @@
-from cisco_device import Device
+from device import CiscoDevice
 from gui import UserInterface as ui
 
 
 if __name__ == '__main__':
-    switch = Device()
+    switch = CiscoDevice()
     pb = ui.progress_bar_window(switch.host)
     pb.UpdateBar(0, 4)
     with switch:
