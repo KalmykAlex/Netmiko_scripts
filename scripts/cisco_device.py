@@ -1,6 +1,6 @@
 from netmiko import ConnectHandler
 from datetime import datetime
-from gui import get_device, get_credentials, get_device_type, save_configuration
+from gui import UserInterface as ui
 from re import search
 import pytz
 
@@ -8,9 +8,9 @@ import pytz
 class Device:
 
     def __init__(self):
-        device_type = get_device_type()
-        self.host = get_device()
-        username, password, secret = get_credentials(self.host)
+        device_type = ui.get_device_type_window()
+        self.host = ui.get_device_window()
+        username, password, secret = ui.get_credentials_window(self.host)
         self.device = {
             'device_type': device_type,
             'host': self.host,
@@ -33,7 +33,9 @@ class Device:
     def clock(self):
         """Returns the time and date on the device."""
         print(f"Fetching time information from {self.device['host']}")
+        self.remote_conn.enable()
         clock_str = self.remote_conn.send_command('show clock').replace('*', '').strip()
+        self.remote_conn.config_mode()
         clock = datetime.strptime(clock_str, '%H:%M:%S.%f %Z %a %b %d %Y')
         clock_utc = pytz.utc.localize(clock)
         return clock_utc.strftime('%H:%M:%S %Z %a %b %d %Y')
@@ -78,39 +80,63 @@ class Device:
     def hostname(self, name):
         """
         Sets the hostname of the device.
-        :param name: string that must contain at least one alphabet or '-' or '_' character
+        :param name: (str) must contain at least one alphabet or '-' or '_' character
         """
         if search('[a-zA-z_-]', name):
             print(f'Setting hostname {name} to {self.host}')
             self.remote_conn.send_command(f'hostname {name}')
-            self.remote_conn.send_command('end')
             print(self.remote_conn.find_prompt())
         else:
             raise ValueError("Hostname should contain at least one alphabet or '-' or '_' character")
 
-
-    def users(self):
+    def get_users(self):
         """Returns a list of configured users."""
         print(f"Fetching users information from {self.device['host']}")
+        self.remote_conn.enable()
         users_str = self.remote_conn.send_command('show running-config | include username').split('\n')
         user_list = []
         for line in users_str:
             user_list.append(line.split()[1])
         return user_list
 
+    def add_user(self):
+        username, password, privilege = ui.add_user_window(self.host, self.get_current_user_privilege())
+        if self.remote_conn.check_enable_mode():
+            self.remote_conn.config_mode()
+        self.remote_conn.send_command(f'username {username} privilege {privilege} password {password}')
+
+    def delete_user(self):
+        user_list = self.get_users()
+        user = ui.delete_user_window(self.host, user_list)
+        self.remote_conn.config_mode()
+        self.remote_conn.send_command(f'no username {user}')
+
+    @property
     def domain(self):
         """Returns the domain name configured on the device."""
         print(f"Fetching domain information from {self.device['host']}")
-        return self.remote_conn.send_command('show running-config | include domain').split()[-1]
+        domain_name = self.remote_conn.send_command('show running-config | include domain').split()[-1]
+        return domain_name
+
+    @domain.setter
+    def domain(self, domain_name):
+        """
+        Sets the domain-name of the device.
+        :param domain_name: (str) domain name of the device
+        """
+        self.remote_conn.send_command(f"ip domain-name {domain_name}")
+
+    def get_current_user_privilege(self):
+        self.remote_conn.enable()
+        privilege = int(self.remote_conn.send_command('show privilege').split()[-1])
+        return privilege
+
+
+    def save_configuration(self):
+        choice = ui.save_configuration_window()
+        if choice:
+            self.remote_conn.enable()
+            self.remote_conn.send_command('write memory')
 
     def __exit__(self, *args):
-        while True:
-            choice = save_configuration()
-            if choice == True:
-                self.remote_conn.enable()
-                self.remote_conn.send_command('write memory')
-                print('Configuration saved to flash.')
-                break
-            else:
-                break
         self.remote_conn.disconnect()

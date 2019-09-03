@@ -1,25 +1,18 @@
 from cisco_device import Device
-from gui import form_secure_login, progress_bar
-from datetime import datetime
+from gui import UserInterface as ui
 
 
 if __name__ == '__main__':
     switch = Device()
+    pb = ui.progress_bar_window(switch.host)
+    pb.UpdateBar(0, 4)
     with switch:
-        switch.hostname = 'switch'
-
-    # pb = progress_bar(switch.host)
-    # pb.UpdateBar(0, 4)
-    #
-    # with switch:
-    #     current_clock = switch.clock
-    #     pb.UpdateBar(1, 4)
-    #     hostname = switch.hostname()
-    #     pb.UpdateBar(2, 4)
-    #     users = switch.users()
-    #     pb.UpdateBar(3, 4)
-    #     domain = switch.domain()
-    #     pb.UpdateBar(4, 4)
-
-
-    # print(form_secure_login(switch.host, current_clock, hostname, domain, users))
+        hostname = switch.hostname
+        pb.UpdateBar(1, 4)
+        users = switch.get_users()
+        pb.UpdateBar(2, 4)
+        domain = switch.domain
+        pb.UpdateBar(3, 4)
+        current_clock = switch.clock
+        pb.UpdateBar(4, 4)
+        print(ui.secure_configuration_window(switch.host, current_clock, hostname, domain, users))
