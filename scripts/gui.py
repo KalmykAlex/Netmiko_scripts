@@ -69,7 +69,7 @@ class UserInterface:
                     return DEVICE_TYPES[1]
 
     @staticmethod
-    def get_credentials_window(host):
+    def get_credentials_window(host='Device'):
         """
         Prompts the user with a login form and returns a tuple
         containing (username, password, secret).
@@ -101,7 +101,7 @@ class UserInterface:
         return values['username'], values['password'], values['secret']
 
     @staticmethod
-    def add_user_window(host, logged_on_priv):
+    def add_user_window(host='device', logged_on_priv=15):
         """Prompts the user with a form for adding a new user."""
         title = f'Add a new user to {host}'
 
@@ -131,7 +131,7 @@ class UserInterface:
                     sg.Popup('Passwords mismatch!')
 
     @staticmethod
-    def delete_user_window(host, user_list):
+    def delete_user_window(host='device', user_list=()):
         """Prompts the user with a form for deleting a user from a list of users."""
         title = f'Delete an user from {host}'
 
@@ -162,7 +162,11 @@ class UserInterface:
 
 
     @staticmethod
-    def secure_configuration_window(host, current_clock, hostname, domain, users):
+    def secure_configuration_window(host='device',
+                                    current_clock='not specified',
+                                    hostname='not specified',
+                                    domain='not specified',
+                                    user_list=()):
         """
         Prompts the user with a form for configuring
         a Cisco device for secure login.
@@ -188,7 +192,7 @@ class UserInterface:
              sg.In(size=(15, 1), default_text=f'{hostname}', key='hostname')],
             [sg.T('Domain', size=(12, 1)),
              sg.In(size=(15, 1), default_text=f'{domain}', key='domain')],
-            [sg.T(f'Configured users: {str(users).replace("[","").replace("]","")}',)],
+            [sg.T(f'Configured users: {str(user_list).replace("[", "").replace("]", "")}', )],
             [sg.Frame(layout=[
                 [sg.T('Username', size=(15, 1)),
                  sg.In(size=(15, 1), default_text='admin', key='username')],
@@ -234,7 +238,7 @@ class UserInterface:
         return event, values
 
     @staticmethod
-    def progress_bar_window(host):
+    def progress_bar_window(host='device'):
         """Displays a progress bar that informs the user on the currently running processes."""
 
         title = f'Fetching device information from {host}'
