@@ -1,6 +1,6 @@
+[![Generic badge](https://img.shields.io/badge/python_version-3.7-blue.svg)](https://shields.io/)
 # Netmiko_scripts
 
-[![Generic badge](https://img.shields.io/badge/python_version-3.7-blue.svg)](https://shields.io/)
 
 Python Scripts for network automation powered by Netmiko!
 
@@ -8,13 +8,28 @@ In the **_scripts_** folder you will find a wide variety of useful network autom
 help me automate network switches, routers and firewalls configuration, back-ups and statistics.
 
 
-### Scripts implemented up to date:
- - get version information from devices
- - get clock information from devices
- - automatic clock update on device with clock offset greater than 30 secs
- 
+### Methods implemented up to date:
+ - .version() - execute _show version_ command and print out the response.
+ - .clock - getter and setter for clock information
+ - .hostname - getter and setter for hostname information
+ - .domain - getter and setter for domain information
+ - .get_users() - returns a list of configured users
+ - .add_user() - creates a new user via gui interface
+ - .delete_user() - deletes a user via gui interface
+ - .get_current_user_privilege() - returns the privilege number for the current logged on user
+ - .save_configuration() - save the device configuration to flash via gui interface
+
+### Project structure
+  __device.py__ - contains the CiscoDevice class that has methods for interacting with the device.
+  __gui.py__ - contains the UserInterface class that has gui templates for device configuration.
+  __my_devices.py__ - a list of all the devices. #TODO: make this a json file
+  __hyperthreading.py__ - an add-on for threading tasks.
+  __main_program.py__ - the place where you can combine all the tools to make magic happen.
+
 
 ### Usage description
+ 
+
  1. You will need to define all of your devices in **my_devices.py**.
  2. In **threading_cmds.py** you will need to pass whichever function you want to the main() function.
   function examples: show_clock, show_version, set_clock etc.
