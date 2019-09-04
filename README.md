@@ -9,31 +9,37 @@ help me automate network switches, routers and firewalls configuration, back-ups
 
 
 ### Methods implemented up to date:
- - .version() - execute _show version_ command and print out the response.
- - .clock - getter and setter for clock information
- - .hostname - getter and setter for hostname information
- - .domain - getter and setter for domain information
- - .get_users() - returns a list of configured users
- - .add_user() - creates a new user via gui interface
- - .delete_user() - deletes a user via gui interface
- - .get_current_user_privilege() - returns the privilege number for the current logged on user
- - .save_configuration() - save the device configuration to flash via gui interface
+ - __version()__ - execute _show version_ command and print out the response.
+ - __clock__ - getter and setter for clock information
+ - __hostname__ - getter and setter for hostname information
+ - __domain__ - getter and setter for domain information
+ - __get_users()__ - returns a list of configured users
+ - __add_user()__ - creates a new user via gui interface
+ - __delete_user()__ - deletes a user via gui interface
+ - __get_current_user_privilege()__ - returns the privilege number for the current logged on user
+ - __save_configuration()__ - save the device configuration to flash via gui interface
+
+### List of GUI's created up to date:
+ - __get_device_window__ - prompts for IP so it knows with whom to establish an SSH connection
+ - __get_device_type_window__ - prompts for the device type (currently only cisco IOS and cisco ASA devices are supported)
+ - __get_credentials_window(*host*)__ - prompts for the username, password and secret for the *host*
+ - __add_user_window(*host*, *logged_on_priv*)__ - prompts for a new username (privilege level not higher that currently logged on user privilege)
+ - __delete_user_window(*host*, *user_list*)__ - propts for a username to be deleted from the *user_list*
+ - __secure_configuration_window(*host*, *current_clock*, *hostname*, *domain*, *user_list*)__ - a more complex window used for basic secure configuration of the device
+ - __progress_bar_window(*host*)__ - a simple progress bar window
+ - __save_configuration_window()__ - window for chosing to save device configuration to flash
 
 ### Project structure
-  __device.py__ - contains the CiscoDevice class that has methods for interacting with the device.
-  __gui.py__ - contains the UserInterface class that has gui templates for device configuration.
-  __my_devices.py__ - a list of all the devices. #TODO: make this a json file
-  __hyperthreading.py__ - an add-on for threading tasks.
-  __main_program.py__ - the place where you can combine all the tools to make magic happen.
+ - __device.py__ - contains the CiscoDevice class that has methods for interacting with the device.
+ - __gui.py__ - contains the UserInterface class that has gui templates for device configuration.
+ - __my_devices.py__ - a list of all the devices. #TODO: make this a json file
+ - __hyperthreading.py__ - an add-on for threading tasks.
+ - __main_program.py__ - the place where you can combine all the tools to make magic happen.
 
 
 ### Usage description
- 
-
- 1. You will need to define all of your devices in **my_devices.py**.
- 2. In **threading_cmds.py** you will need to pass whichever function you want to the main() function.
-  function examples: show_clock, show_version, set_clock etc.
- 3. After you run the script a pop-up will appear asking you for login credentials for each device.
+ You are free to use the methods created in the device.CiscoDevice class however you want to acomplish your task.
+ Feel free to use the predefined GUI interfaces from gui.UserInterface class.
 
 
 ### Devices tested | results: 
