@@ -28,8 +28,8 @@ ___
 
 ___
 ### List of GUI's created up to date:
- - __get_device_window__ - prompts for IP so it knows with whom to establish an SSH connection
- - __get_device_type_window__ - prompts for the device type (currently only cisco IOS and cisco ASA devices are supported)
+ - __get_device_window()__ - prompts for IP so it knows with whom to establish an SSH connection
+ - __get_device_type_window()__ - prompts for the device type (currently only cisco IOS and cisco ASA devices are supported)
  - __get_credentials_window(*host*)__ - prompts for the username, password and secret for the *host*
  - __add_user_window(*host*, *logged_on_priv*)__ - prompts for a new username (privilege level not higher that currently logged on user privilege)
  - __delete_user_window(*host*, *user_list*)__ - propts for a username to be deleted from the *user_list*
