@@ -1,13 +1,18 @@
 [![Generic badge](https://img.shields.io/badge/python_version-3.7-blue.svg)](https://shields.io/)
 # Netmiko_scripts
 
-
 Python Scripts for network automation powered by Netmiko!
 
 In the **_scripts_** folder you will find a wide variety of useful network automation scripts that I have developed to
 help me automate network switches, routers and firewalls configuration, back-ups and statistics.
 
-
+### Project structure
+ - __device.py__ - contains the __CiscoDevice__ class that has methods for interacting with the device.
+ - __gui.py__ - contains the __UserInterface__ class that has gui templates for device configuration.
+ - __my_devices.py__ - a list of all the devices. #TODO: make this a json file
+ - __hyperthreading.py__ - an add-on for threading tasks.
+ - __main_program.py__ - the place where you can combine all the tools to make magic happen.
+ 
 ### Methods implemented up to date:
  - __version()__ - execute _show version_ command and print out the response.
  - __clock__ - getter and setter for clock information
@@ -29,18 +34,9 @@ help me automate network switches, routers and firewalls configuration, back-ups
  - __progress_bar_window(*host*)__ - a simple progress bar window
  - __save_configuration_window()__ - window for chosing to save device configuration to flash
 
-### Project structure
- - __device.py__ - contains the CiscoDevice class that has methods for interacting with the device.
- - __gui.py__ - contains the UserInterface class that has gui templates for device configuration.
- - __my_devices.py__ - a list of all the devices. #TODO: make this a json file
- - __hyperthreading.py__ - an add-on for threading tasks.
- - __main_program.py__ - the place where you can combine all the tools to make magic happen.
-
-
 ### Usage description
  You are free to use the methods created in the device.CiscoDevice class however you want to acomplish your task.
  Feel free to use the predefined GUI interfaces from gui.UserInterface class.
-
 
 ### Devices tested | results: 
 I primarily focus on Cisco equipment but I am experimenting with other brands also.
@@ -51,7 +47,6 @@ I primarily focus on Cisco equipment but I am experimenting with other brands al
  - [X] Cisco ASA 5506 | works fine
  - [ ] Cisco ASA 5508 | not yet tested
  - [ ] Cisco ASA 5545 | not yet tested
- 
  
  ### Setting up SSH connection first
  
